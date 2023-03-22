@@ -4,9 +4,9 @@ const { Configuration, OpenAIApi } = require('openai');
 
 const client = new Client({
   intents: [
-    IntentsBitField.FLAGS.GUILDS,
-    IntentsBitField.FLAGS.GUILD_MESSAGES,
-    IntentsBitField.FLAGS.MESSAGE_CONTENTS,
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.MessageContent,
   ],
 });
 
@@ -21,6 +21,7 @@ const openai = new OpenAIApi(configuration);
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
+  if (message.channel.id !== process.env.CHANNEL_ID) return;
   if (message.content.startsWith('!')) return;
 
   let conversationLog = [{ role: 'system', content: 'You are a friendly chatbot.' }];
@@ -42,13 +43,17 @@ client.on('messageCreate', async (message) => {
       });
     });
 
-    const result = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      prompt: conversationLog,
-      maxTokens: 256,
-    });
+    const result = await openai
+      .createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: conversationLog,
+        // max_tokens: 256, // limit token usage
+      })
+      .catch((error) => {
+        console.log(`OPENAI ERR: ${error}`);
+      });
 
-    message.reply(result.choices[0].text);
+    message.reply(result.data.choices[0].message);
   } catch (error) {
     console.log(`ERR: ${error}`);
   }
