@@ -1,7 +1,9 @@
 require('dotenv/config');
 const { Client, IntentsBitField } = require('discord.js');
 const { Configuration, OpenAIApi } = require('openai');
+const express = require('express');
 
+const app = express();
 const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
@@ -60,3 +62,13 @@ client.on('messageCreate', async (message) => {
 });
 
 client.login(process.env.TOKEN);
+
+// Create a simple express HTTP server that listens on the required port
+app.get('/', (req, res) => {
+  res.send('Bot is running');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
