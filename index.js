@@ -61,6 +61,7 @@ client.on('messageCreate', async (message) => {
 
 client.login(process.env.TOKEN);
 
+
 // Create a simple express HTTP server that listens on the required port
 app.get('/', (req, res) => {
   res.send('Bot is running');
