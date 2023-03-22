@@ -4,9 +4,9 @@ const { Configuration, OpenAIApi } = require('openai');
 
 const client = new Client({
   intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.MessageContent,
+    IntentsBitField.FLAGS.GUILDS,
+    IntentsBitField.FLAGS.GUILD_MESSAGES,
+    IntentsBitField.FLAGS.MESSAGE_CONTENTS,
   ],
 });
 
@@ -42,17 +42,13 @@ client.on('messageCreate', async (message) => {
       });
     });
 
-    const result = await openai
-      .createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: conversationLog,
-        // max_tokens: 256, // limit token usage
-      })
-      .catch((error) => {
-        console.log(`OPENAI ERR: ${error}`);
-      });
+    const result = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      prompt: conversationLog,
+      maxTokens: 256,
+    });
 
-    message.reply(result.data.choices[0].message);
+    message.reply(result.choices[0].text);
   } catch (error) {
     console.log(`ERR: ${error}`);
   }
