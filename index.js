@@ -1,7 +1,6 @@
 require('dotenv/config');
 const { Client, IntentsBitField } = require('discord.js');
 const { Configuration, OpenAIApi } = require('openai');
-const express = require('express');
 
 const app = express();
 const client = new Client({
